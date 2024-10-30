@@ -20,7 +20,7 @@ def connect_to_sql_server():
     return conn
 
 
-# Generera Latitude och Longitude baserat på plats
+#  Latitude och Longitude baserat på plats
 def generate_random_coordinates(location):
     cities = {
         "Stockholm": (59.3293, 18.0686),
@@ -95,24 +95,24 @@ def generate_random_coordinates(location):
         city = random.choice(list(cities.keys()))
         base_lat, base_lon = cities[city]
 
-    # en liten avvikelse för att simulera närliggande områden
+    # avvikelse för att simulera närliggande områden
     lat_offset = random.uniform(-0.05, 0.05)
     lon_offset = random.uniform(-0.05, 0.05)
 
     return base_lat + lat_offset, base_lon + lon_offset
 
-# Funktion för att ta bort datum och plats från rubriken
+# ta bort datum och plats från rubriken
 def clean_rubrik(event_name):
-    # Kontrollera om rubriken innehåller minst två kommatecken
+    
     if "," in event_name:
-        parts = event_name.split(',')  # Dela vid alla kommatecken
+        parts = event_name.split(',')  
         if len(parts) > 2:
-            return parts[1].strip()  # Returnera delen mellan de första och sista kommatecknen
+            return parts[1].strip()  
         elif len(parts) > 1:
-            return parts[1].strip()  # Om det bara finns ett komma, returnera den andra delen
-    return event_name  # Om inga kommatecken hittades, returnera rubriken som den är
+            return parts[1].strip()  
+    return event_name 
 
-# Funktion för att spara en brottshändelse i SQL-databasen
+# spara en brottshändelse i SQL-databasen
 def save_crime_event(conn, event_date, event_name, latitude, longitude, location, link):
     cursor = conn.cursor()
 
@@ -136,7 +136,7 @@ def fetch_and_store_events():
         stockholm_tz = pytz.timezone('Europe/Stockholm')
         end_date = stockholm_tz.localize(datetime.today())
 
-        # Hämta nuvarande data från SQL-databasen för att kontrollera senaste händelse
+        # jämföra data från SQL-databasen för att kontrollera senaste händelse
         conn = connect_to_sql_server()
         cursor = conn.cursor()
 
@@ -156,18 +156,18 @@ def fetch_and_store_events():
             try:
                 event_date = parser.parse(event['datetime'])
 
-                # Gör både event_date och latest_existing_date till offset-naive (ta bort tidszon)
+                # Gör både event_date och latest_existing_date till offset-naive 
                 event_date_naive = event_date.replace(tzinfo=None)
                 latest_existing_date_naive = latest_existing_date.replace(tzinfo=None)
 
                 # Kontrollera om händelsen är nyare än den senaste händelsen i databasen
                 if event_date_naive > latest_existing_date_naive:
                     location = event['location']['name']
-                    event_name = clean_rubrik(event['name'])  # Rensa händelsenamn
+                    event_name = clean_rubrik(event['name'])  
                     link = event['url']
                     description = event.get('summary', '')
 
-                    # Generera slumpmässig latitud och longitud
+                    # Generera latitud och longitud
                     latitude, longitude = generate_random_coordinates(location)
 
                     # Spara händelsen i SQL Server
