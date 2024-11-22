@@ -13,8 +13,8 @@ url = "https://polisen.se/api/events"
 def connect_to_sql_server():
     conn = pyodbc.connect(
         'DRIVER={SQL Server};'
-        'SERVER=MUSTAF;' 
-        'DATABASE=CrimeNotificationSystem;'
+        'SERVER=.........;' 
+        'DATABASE=............;'
         'Trusted_Connection=yes;'
     )
     return conn
